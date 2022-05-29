@@ -25,7 +25,7 @@ namespace PokemonPocket
             this.Count--;
             var pokeballsMaster = new Dictionary<string, double>()
             {
-                {"Poke Ball", 0.4},
+                {"Poke Ball", 0.1},
                 {"Great Ball", 0.6},
                 {"Ultra Ball", 0.8},
                 {"Master Ball", 1},
@@ -38,7 +38,7 @@ namespace PokemonPocket
                 return true;
             } else {
                 Console.WriteLine($"The {pokemon.Name} evades capture!");
-                pokemon.Tries--;
+                pokemon.Tries--;                
                 if (pokemon.Tries == 0)
                 {
                     Console.WriteLine($"The {pokemon.Name} runs away!");

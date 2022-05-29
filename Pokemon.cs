@@ -89,7 +89,7 @@ namespace PokemonPocket
         public WildPokemon(string name, int hp, int exp) : base (name, hp, exp)
         {
             
-            this.Tries = new Random().Next(5);
+            this.Tries = new Random().Next(1,5);
         }
     }
 }

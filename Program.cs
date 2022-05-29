@@ -141,6 +141,11 @@ namespace PokemonPocket
 
         static void ListPokes(List<Pokemon> pokemons, bool id = true)
         {
+            if (pokemons.Count ==0 )
+            {
+                Console.WriteLine("No Pokemons to show!");
+                return;
+            }
             foreach (var obj in pokemons)
             {
                 if (obj.Shiny)
@@ -259,8 +264,6 @@ namespace PokemonPocket
             var evolvees = new List<Pokemon>();
             if (evolvables.Count() > evoRequirement)
             {
-                ListPokes(evolvables.OrderBy(p => p.Id).ToList());
-
                 for (int x = 0; x < evoRequirement; x++)
                 {
                     
@@ -338,7 +341,7 @@ namespace PokemonPocket
                 Console.WriteLine($"Name: {wildpoke.Name}");
                 Console.WriteLine($"HP: {wildpoke.Hp}");
                 Console.WriteLine($"EXP: {wildpoke.Exp}");
-                
+
                 
                 bool exit = true;
                 while (exit)
@@ -372,9 +375,7 @@ namespace PokemonPocket
                                         wildpoke.Shiny = true;
                                         Console.WriteLine($"SUCCESS! You caught the {wildpoke.Name}. It has been added to your pocket.");
                                         Console.WriteLine("NO WAY! ITS SHINY");
-                                        RewardBalls(db, 20, 31);
-                                        Console.WriteLine(wildpoke.Shiny);
-                                        
+                                        RewardBalls(db, 20, 31);                                        
                                         
                                     } else {
                                         pity.Add();
@@ -385,7 +386,11 @@ namespace PokemonPocket
                                 } else if (wildpoke.Tries > 0) {
                                     if (ReadOptions("Try Again? (Y/N): ", new List<string>() {"Y", "N"}).ToLower() == "n")  
                                     {
+                                        Console.WriteLine("Running away!...");
                                         break;
+                                    } else if (wildpoke.Tries == 1) {
+                                        Console.WriteLine($"The {wildpoke.Name} grows restless! ");
+                                        
                                     }
                                 }
                             } while (wildpoke.Tries > 0 && pokeballs.Where(p => p.Count > 0).Count() > 0);
@@ -394,10 +399,10 @@ namespace PokemonPocket
                                 Console.WriteLine("You have no available Pokeballs to use. Running away and returning home!");
                                 return null;
                             }
-                            Console.WriteLine("Running away!...");
                             exit = false;
                             break;
                         case "0":
+                            Console.WriteLine("Running away!...");
                             exit = false;
                             break;
                     }
@@ -433,27 +438,6 @@ namespace PokemonPocket
                 new PokemonMaster("Charmander", 1, "Charmeleon")
             };
 
-            if (args.Length > 0)
-            {
-                switch (args[0])
-                {
-                    case "restartall":
-                        db.RemoveRange(db.Pokemons);
-                        db.RemoveRange(db.Pokeballs);
-                        db.RemoveRange(db.Pity);
-                        break;
-                    case "restartpokeballs":
-                        db.RemoveRange(db.Pokeballs);
-                        break;
-                    case "restartpity":
-                        db.RemoveRange(db.Pity);
-                        break;
-
-                    case "restartpokemons":
-                        db.RemoveRange(db.Pokemons);
-                        break;
-                }
-            }
 
             if (db.Pokeballs.Count() == 0) {
                 Console.WriteLine("Creating Pokeball objects");
