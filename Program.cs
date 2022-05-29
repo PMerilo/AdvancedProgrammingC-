@@ -74,10 +74,11 @@ namespace PokemonPocket
                 }
             }
         }
-        static string UserInput()
+        static string UserInput(PokePocket db)
         {
             Console.WriteLine("*****************************");
             Console.WriteLine("Welcome to Pokemon Pocket App");
+            Console.WriteLine($"Current Pity: {db.Pity.First().Value*100}%");
             Console.WriteLine("*****************************");
             Console.WriteLine("(1). Add Pokemon to Pocket");
             Console.WriteLine("(2). List Pokemon(s) in Pocket");
@@ -140,9 +141,6 @@ namespace PokemonPocket
 
         static void ListPokes(List<Pokemon> pokemons, bool id = true)
         {
-            pokemons = pokemons
-                    .OrderBy(obj => obj.Hp)
-                    .ToList();
             foreach (var obj in pokemons)
             {
                 if (obj.Shiny)
@@ -153,7 +151,9 @@ namespace PokemonPocket
                 {
                     Console.WriteLine($"---------ID: {obj.Id}-------------");
                 } else {
-
+                    pokemons = pokemons
+                    .OrderBy(obj => obj.Hp)
+                    .ToList();
                     Console.WriteLine($"--------------------------");
                 }
                 Console.WriteLine($"Name: {obj.Name}");
@@ -225,15 +225,15 @@ namespace PokemonPocket
         {
 
             var evolvables = CheckEvolve(db, pokemonMasters);
+            evolvables = evolvables
+                        .OrderBy(p => p.Id)
+                        .ToList();
             var evos = evolvables
                     .Select(obj => obj.Name.ToLower())
                     .Distinct()
                     .ToList();
 
-            if (evos.Count == 0){return;}
-
-            var i = db.Pokemons
-                    .OrderBy(obj => obj.Id);            
+            if (evos.Count == 0){return;}     
             
             string evo = ReadOptions($"Select an Evolution ({String.Join(',', evos)}): ", evos).ToLower();
 
@@ -259,13 +259,14 @@ namespace PokemonPocket
             var evolvees = new List<Pokemon>();
             if (evolvables.Count() > evoRequirement)
             {
-                ListPokes(evolvables);
+                ListPokes(evolvables.OrderBy(p => p.Id).ToList());
 
                 for (int x = 0; x < evoRequirement; x++)
                 {
                     
-                    int evolveeID = ReadOptionsInt($"Select No.{x} Pokemon to Consume (Select ID): ", evolvables.Select(p => p.Id).ToList());
+                    int evolveeID = ReadOptionsInt($"Select {x+1}th Pokemon to Consume (Select ID): ", evolvables.OrderBy(p => p.Id).Select(p => p.Id).ToList());
                     evolvees.Add(evolvables.Single(obj => obj.Id == evolveeID));
+                    evolvables.Remove(evolvables.Single(obj => obj.Id == evolveeID));
                 }
 
             } else
@@ -281,9 +282,7 @@ namespace PokemonPocket
 
             for (int x = 0; x < evoRequirement; x++)
             {
-
-                db.Remove(i.ToList()[x]);
-
+                db.Remove(evolvees[x]);
             }
             
             Console.WriteLine($"{evo} has evolved to {evolver.Name}");
@@ -476,7 +475,7 @@ namespace PokemonPocket
             // Start your assignment 1 requirements below.
             do
             {
-                string userInput = UserInput();
+                string userInput = UserInput(db);
                 Console.WriteLine("-----------------------------------------------------------");
                 switch(userInput)
                 {
