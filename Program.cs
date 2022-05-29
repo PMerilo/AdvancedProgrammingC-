@@ -363,7 +363,7 @@ namespace PokemonPocket
                             do
                             {
                                 ListPokeballs(pokeballs);
-                                var ballinput = ReadOptionsInt("Which ball will you use?: ", pokeballs.Where(b => b.Count > 0).Select(b => b.Id).ToList());
+                                var ballinput = ReadOptionsInt($"Which ball will you use? ({String.Join(", ", pokeballs.Where(b => b.Count > 0).Select(b => b.Id).ToList())}): ", pokeballs.Where(b => b.Count > 0).Select(b => b.Id).ToList());
                                 if (pokeballs.Single(p => p.Id == ballinput).useBall(wildpoke))
                                 {
                                     var pity = db.Pity.First();
